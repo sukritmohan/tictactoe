@@ -9,27 +9,37 @@ class TicTacToeEngine:
 		self.player2 = player2
 		self.player1_score = 0
 		self.player2_score = 0
-
-		self.__board = None
+		self.game_count = 0
 
 		self.turn = False #Player 1 starts. {False: player1, True: player2}
+		self.newGame()
+
 
 	def newGame(self):
+		"""
+		Set up the board and increment the game_count
+		"""
 		self.__board = TicTacToeBoard()
 		self.__board_size = self.__board.getBoardSideSize()
+		self.game_count += 1
+		self.player1.newGame()
+		self.player2.newGame()
 
 	def getGameplayState(self):
+		"""
+		Return the gameplay state (to display in view)
+		"""
 		return {self.player1.id: self.player1_score,
 				self.player2.id: self.player2_score,
+				'game_number': self.game_count,
 				'next': self.getNextPlayer()}
 
 	def getBoard(self):
-		if not self.__board:
-			raise Exception('must start newGame before calling getBoard')
-
+		"""Return the state of the board"""
 		return self.__board.getBoardState()
 
 	def getNextPlayer(self):
+		"""Return the next player"""
 		if(not self.turn):
 			player = self.player1
 		else:
@@ -37,15 +47,19 @@ class TicTacToeEngine:
 		return player
 
 	def makeMove(self, player, move):
-		if not self.__board:
-			raise Exception('must start newGame before calling makeMove')
+		"""
+		`player` makes `move` on tictactoe board
+		:param player: player making the move
+		:param move: integer representing tile position on tictactoe board
+		:return: boolean denoting whether or not move was successful
+		"""
 
+		#the player who is making the move, must be the next player according to TicTacToeEngine
 		if(player != self.getNextPlayer()):
 			return False
 
-
+		#make the move on the board. If the move is successful, toggle turn
 		move_successful = self.__board.makeMove(player.id, move)
-
 		if move_successful:
 			self.turn = not self.turn
 
@@ -53,11 +67,13 @@ class TicTacToeEngine:
 
 
 	def evaluateBoard(self):
-		if not self.__board:
-			raise Exception('must start newGame before calling evaluateBoard')
+		"""
+		Evaluate whether the game is ongoing or finished, and return the status (ongoing, draw, player1 win, player2 win)
+		:return: integer 'state' of the game. {-1: still playing, 0: draw, <x>: player with id <x> wins}
+		"""
 
 		#ways of winning: n horizontal, n vertical, 2 diagonal
-		state = -1 # {-1: still playing, 0: draw, <x>: player with id <x> wins}
+		state = -1 #
 		model = self.getBoard()
 
 		#HORIZONTAL
@@ -98,12 +114,17 @@ class TicTacToeEngine:
 			if all(x != TicTacToeHelper.EMPTY for x in flattened_board):
 				state = 0
 
-
-		print state
 		if (state == 1):
 			self.player1_score += 1
+			self.player1.updateState(model, 100)
+			self.player2.updateState(model, -100)
 		elif (state == 2):
 			self.player2_score += 1
+			self.player1.updateState(model, -100)
+			self.player2.updateState(model, 100)
+		elif (state == 0):
+			self.player1.updateState(model, -5)
+			self.player2.updateState(model, -5)
 
 		return state
 

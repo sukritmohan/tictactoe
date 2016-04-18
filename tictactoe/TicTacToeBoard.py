@@ -1,4 +1,3 @@
-import itertools
 import copy
 from TicTacToeHelper import TicTacToeHelper
 
@@ -12,42 +11,35 @@ class TicTacToeBoard:
 	##
 
 	def __init__(self):
-		self.__board_size = 3
+		self.__board_size = TicTacToeHelper.SIZE
 		self.__model = [[TicTacToeHelper.EMPTY for x in range(self.__board_size)] for x in range(self.__board_size)] # n*n matrix set to all 0's
 
 	def getBoardState(self):
+		"""Return a copy of the state of the board"""
 		return copy.deepcopy(self.__model)
 
 	def getBoardSideSize(self):
+		"""Return board size"""
 		return self.__board_size
 
 	def makeMove(self, player_id, move):
-		#from the mapping 'move', get the actual location on the board.
-		try:
-			move_int = int(move)
-		except Exception:
-			return False
-
-		move_i, move_j = TicTacToeBoard.__getMovePosition(move_int)
-		if self.__isValidMove(move_i, move_j):
+		"""Player `player_id` makes `move` on board"""
+		if(self.isValidMove(move)):
+			move_i, move_j = TicTacToeHelper.getMoveIndexes(int(move))
 			self.__model[move_i][move_j] = player_id
 			return True
+
 		return False
 
 	def isValidMove(self, move):
+		"""Verify if `move` can be made on the tictactoe board"""
 		try:
 			move_int = int(move)
 		except Exception:
 			return False
 
-		i,j = TicTacToeBoard.__getMovePosition(move)
+		i,j = TicTacToeHelper.getMoveIndexes(move_int)
 		return self.__isValidMove(i,j)
-
-	@staticmethod
-	def __getMovePosition(move, board_size = 3):
-		i = (move-1)/board_size
-		j = (move-1) % board_size
-		return i,j
 
 	def __isValidMove(self, i, j):
 		return (i >=0 and i < self.__board_size and \

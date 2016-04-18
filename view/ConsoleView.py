@@ -46,6 +46,7 @@ class ConsoleView(object):
 	def showGamePlayState(self, gameplay_state):
 
 		self.__printHeader()
+		print "GAME NUMBER : %d" % gameplay_state['game_number']
 		print "SCORES:\t\tPlayer 1 (%s): %d\t\t\tPlayer 2 (%s) : %d" % \
 			(self.player1.symbol, gameplay_state[self.player1.id], self.player2.symbol, gameplay_state[self.player2.id])
 
@@ -54,8 +55,6 @@ class ConsoleView(object):
 	def requestMove(self, player, board):
 		print "\n"
 		self.printBoard(board)
-
-		print board
 
 		# def request(id):
 		# 	return raw_input("Player %d, select your move:  " % id)

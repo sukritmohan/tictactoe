@@ -8,5 +8,6 @@ class RandomPlayer(Player):
 		Player.__init__(self, id)
 
 	def requestMove(self, board):
+		print "RANDOM_PLAYER MOVE"
 		valid_moves = TicTacToeHelper.getValidMoves(board)
 		return random.choice(valid_moves)

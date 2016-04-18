@@ -10,7 +10,17 @@ class Player(object):
 
 	@abc.abstractmethod
 	def requestMove(*args):
+		"""This is called to request the player to make a move. Subclasses must implement this function"""
 		pass
 
 	def saveState(*args):
-		print "Saved No State -- DEFAULT"
+		"""If the player maintains any state while playing, this is the chance to persist to file."""
+		pass
+
+	def updateState(*args):
+		"""If the player needs to update its state during gameplay, call this function"""
+		pass
+
+	def newGame(*args):
+		"""Any preparatory work that a player needs to do at the start of a game"""
+		pass
