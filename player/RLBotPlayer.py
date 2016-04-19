@@ -1,4 +1,5 @@
 import json
+import pickle
 import os
 import sys
 
@@ -11,46 +12,15 @@ from tictactoe import TicTacToeHelper
 
 class RLBotPlayer(Player):
 
-	def __init__(self, id, statefile = None, policy='qlearning'):
+	def __init__(self, id, policy):
 		Player.__init__(self, id)
-
-		self.__statefile = statefile
-		self.__policytype = policy
-
-		self.loadModel(self.__statefile)
-
-
-	def loadModel(self, statefile):
-		"""
-		Load the model from the statefile given. If statefile doesn't exist, or is empty, start creating a new model
-		:param statefile: Filepath of Reinforcement Learning Policy Model
-		"""
-		try:
-			if not os.path.exists(statefile):
-				open(statefile, 'w').close()
-				self.__state = {}
-			else:
-				self.__state = json.load(open (statefile, 'r'))
-		except Exception:
-			print "Couldn't open model file for RLBotPlayer : %s" % statefile
-			sys.exit(1)
-
-		if 'policy' in self.__state:
-			self.__policytype = self.__state['policy']
-
-		if self.__policytype == 'qlearning':
-			policy = QLearningPolicy(self.__state)
-		else:
-			policy = SARSAPolicy(self.__state)
-
 		self.setPolicy(policy)
-
 
 	def setPolicy(self, policy):
 		self.policy = policy
 
 	def newGame(self):
-		self.policy.newEpisode()
+		self.__state_history = []
 
 
 	def __selectFromSymmetricStates(self, board):
@@ -86,27 +56,51 @@ class RLBotPlayer(Player):
 
 		return rotation, this_board
 
-
-	def updateState(self, board, reward):
-
+	def __getRotatedBoard(self, board):
+		"""
+		Normalize this board for this particular player (This player denoted as 'A', other player denoted as 'B', EMPTY as EMPTY).
+		This normalized notation helps maintain consistency in denoting states for the RL model.
+		Choose a symmetric variation of this normalized board which the RL model has seen before and return <rotation_count, rotated_board>
+		"""
 		player_normalized_board = TicTacToeHelper.normalizeBoard(board, self.id)
 		rotation, this_board = self.__selectFromSymmetricStates(player_normalized_board)
 
-		self.policy.savePolicy(TicTacToeHelper.serializeBoard(this_board), reward)
+		return rotation, this_board
+
+
+	def updateState(self, board, reward):
+		"""
+		Should be called on terminal state. Update the policy.
+		:param board: final board
+		:param reward: reward at end of game
+		:return: None
+		"""
+		#get the rotated and normalized board for this player
+		rotation, this_board = self.__getRotatedBoard(board)
+
+		self.__state_history.append((TicTacToeHelper.serializeBoard(this_board), -1))
+
+		self.policy.updatePolicy(self.__state_history, reward)
 
 
 	def requestMove(self, board):
-		print "BOT_PLAYER MOVE"
-		player_normalized_board = TicTacToeHelper.normalizeBoard(board, self.id)
 
-		rotation, this_board = self.__selectFromSymmetricStates(player_normalized_board)
+		#get the rotated and normalized board for this player
+		rotation, this_board = self.__getRotatedBoard(board)
 
 		# pass the rotated and normalized board to the policy to get back the optimal move.
-		move = self.policy.getMove(this_board)
+		this_state = TicTacToeHelper.serializeBoard(this_board)
+		valid_moves = TicTacToeHelper.getValidMoves(this_board)
+
+		move = self.policy.getAction(this_state, valid_moves)
+
+		#save this state and the move that this player made for this state
+		self.__state_history.append((this_state, move))
 
 		# rotate the optimal move back `rotation` times to match the original board index
 		ret_move = TicTacToeHelper.reverseRotateMove(move, rotation)
 		return ret_move
 
+
 	def saveState(self):
-		self.policy.persistPolicy(self.__statefile)
+		self.policy.persistPolicy()

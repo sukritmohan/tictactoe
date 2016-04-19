@@ -22,15 +22,6 @@ class TicTacToeBoard:
 		"""Return board size"""
 		return self.__board_size
 
-	def makeMove(self, player_id, move):
-		"""Player `player_id` makes `move` on board"""
-		if(self.isValidMove(move)):
-			move_i, move_j = TicTacToeHelper.getMoveIndexes(int(move))
-			self.__model[move_i][move_j] = player_id
-			return True
-
-		return False
-
 	def isValidMove(self, move):
 		"""Verify if `move` can be made on the tictactoe board"""
 		try:
@@ -40,6 +31,15 @@ class TicTacToeBoard:
 
 		i,j = TicTacToeHelper.getMoveIndexes(move_int)
 		return self.__isValidMove(i,j)
+
+	def makeMove(self, player_id, move):
+		"""Player `player_id` makes `move` on board"""
+		if(self.isValidMove(move)):
+			move_i, move_j = TicTacToeHelper.getMoveIndexes(int(move))
+			self.__model[move_i][move_j] = player_id
+			return True
+
+		return False
 
 	def __isValidMove(self, i, j):
 		return (i >=0 and i < self.__board_size and \

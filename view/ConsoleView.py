@@ -56,9 +56,6 @@ class ConsoleView(object):
 		print "\n"
 		self.printBoard(board)
 
-		# def request(id):
-		# 	return raw_input("Player %d, select your move:  " % id)
-
 		return player, player.requestMove(board)
 
 	def moveUnsuccessful(self):

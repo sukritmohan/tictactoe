@@ -116,15 +116,15 @@ class TicTacToeEngine:
 
 		if (state == 1):
 			self.player1_score += 1
-			self.player1.updateState(model, 100)
-			self.player2.updateState(model, -100)
+			self.player1.updateState(model, TicTacToeHelper.REWARD_WIN)
+			self.player2.updateState(model, TicTacToeHelper.REWARD_LOSE)
 		elif (state == 2):
 			self.player2_score += 1
-			self.player1.updateState(model, -100)
-			self.player2.updateState(model, 100)
+			self.player1.updateState(model, TicTacToeHelper.REWARD_LOSE)
+			self.player2.updateState(model, TicTacToeHelper.REWARD_WIN)
 		elif (state == 0):
-			self.player1.updateState(model, -5)
-			self.player2.updateState(model, -5)
+			self.player1.updateState(model, TicTacToeHelper.REWARD_DRAW)
+			self.player2.updateState(model, TicTacToeHelper.REWARD_DRAW)
 
 		return state
 

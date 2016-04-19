@@ -1,13 +1,21 @@
-import itertools
-import copy
+
 
 class TicTacToeHelper():
 
 	EMPTY = 0
 	SIZE = 3
 
+	REWARD_WIN = 100
+	REWARD_DRAW = -5
+	REWARD_LOSE = -100
+
 	@staticmethod
 	def getValidMoves(board):
+		"""
+		Returns the valid moves which can be made on this board. For a move to be valid, the board tile must be empty.
+		:param board: tictactoe board
+		:return: list of valid moves on board
+		"""
 
 		moves = []
 		for i in range(TicTacToeHelper.SIZE):
@@ -16,30 +24,39 @@ class TicTacToeHelper():
 					moves.append( TicTacToeHelper.getBoardPosition(i, j) )
 		return moves
 
-	#Flatten the board and make a string out of it
 	@staticmethod
 	def serializeBoard(board):
+		"""Flatten the board to make a string out of it - used to denote board state"""
 		return "".join(map(lambda row: "".join( map(lambda t: str(t), row)), board))
 
 	@staticmethod
 	def rotateBoard_clockwise(board):
+		"""Rotate the board clockwise"""
 		return zip(*board[::-1])
 
-	#Normalize the board such that the id passed is represented as 'A', and the other player is represented as 'B'. EMPTY stays EMPTY
 	@staticmethod
 	def normalizeBoard(board, id):
+		"""Normalize the board such that the id passed is represented as 'A', and the other player is represented as 'B'. EMPTY stays EMPTY"""
 		return map( \
 				lambda row: map(lambda tile: 'A' if tile==id else('B' if tile!=TicTacToeHelper.EMPTY else TicTacToeHelper.EMPTY) , row), \
 				board)
 
 	@staticmethod
 	def getMoveIndexes(move):
+		"""
+		From board position, return the board indexes
+		Eg getMoveIndexes(5) = (1,1)
+		"""
 		i = (move-1)/TicTacToeHelper.SIZE
 		j = (move-1) % TicTacToeHelper.SIZE
 		return i,j
 
 	@staticmethod
 	def getBoardPosition(i, j):
+		"""
+		From board index i and j, return the board position
+		Eg: (1,2) = 6
+		"""
 		return TicTacToeHelper.SIZE*i + j + 1
 
 	#

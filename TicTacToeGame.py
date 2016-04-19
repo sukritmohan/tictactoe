@@ -5,6 +5,12 @@ from player import RLBotPlayer
 from view import ConsoleView
 from view import TrainingView
 
+from rl import RLHelper
+
+import os
+
+from optparse import OptionParser
+
 
 class TicTacToe:
 
@@ -51,18 +57,59 @@ class TicTacToe:
 
 if __name__ == "__main__":
 
-	#TODO: Read arguments and determine which game to play
+	this_dir = os.path.dirname(os.path.abspath(__file__))
+
 	is2P = False
 	is1P = False
-	isRandomTraining = True
+	isTraining = True
 
-	if isRandomTraining:
+	isSARSA = True
+	isQL = False
+
+	parser = OptionParser()
+	parser.add_option("--2p", dest="is2P", default=False, action='store_true')
+	parser.add_option("--training", dest="isTraining", default=False, action='store_true')
+	parser.add_option("--qlearning", dest="isQL", default=False, action='store_true')
+	parser.add_option("--sarsa", dest="isSARSA", default=False, action='store_true')
+	parser.add_option("--model_file", dest="model_file", help="Path to model file")
+
+
+	(options, args) = parser.parse_args()
+
+	if options.is2P:
+		is2P = True
+	elif options.isTraining:
+		isTraining = True
+	else:
+		is1P = True
+
+	if is1P or isTraining:
+		statefile = options.model_file or ""
+
+		if options.isQL:
+			if not statefile:
+				statefile = this_dir + "/rl/qlmodel_agent_v_random.dmp"
+		elif options.isSARSA:
+			if not statefile:
+				statefile = this_dir + "/rl/sarsamodel_agent_v_random.dmp"
+
+
+	#statefile = "/Users/sukritmohan/code/repo2/rl/test.dmp"
+
+
+	#policy = RLHelper.loadModel(statefile)
+
+	#policy = RLHelper.getNewModel("qlearning")
+	policy = RLHelper.getNewModel("sarsa")
+	policy.setStatefile(statefile)
+
+	if isTraining:
 		player1 = RandomPlayer(1)
-		player2 = RLBotPlayer(2, "/Users/sukritmohan/code/repo2/rl/qlmodel_2.dmp")
+		player2 = RLBotPlayer(2, policy)
 		view = TrainingView(player1, player2)
 	elif is1P:
 		player1 = HumanPlayer(1)
-		player2 = RLBotPlayer(2, "/Users/sukritmohan/code/repo2/rl/qlmodel_2.dmp")
+		player2 = RLBotPlayer(2, policy)
 		view = ConsoleView(player1, player2)
 	elif is2P:
 		player1 = HumanPlayer(1)

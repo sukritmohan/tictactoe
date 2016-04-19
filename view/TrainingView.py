@@ -9,8 +9,8 @@ class TrainingView(object):
         pass
 
     def showGamePlayState(self, gameplay_state):
-        print "SCORES:\t\tPlayer 1 (%s): %d\t\t\tPlayer 2 (%s) : %d" % \
-			(self.player1.id, gameplay_state[self.player1.id], self.player2.id, gameplay_state[self.player2.id])
+        print "GAME: %d \t\t\tSCORES:\t\tPlayer 1 (%s): %d\t\t\tPlayer 2 (%s) : %d" % \
+			(gameplay_state['game_number'], self.player1.id, gameplay_state[self.player1.id], self.player2.id, gameplay_state[self.player2.id])
 
     def requestMove(self, player, board):
         return player, player.requestMove(board)
