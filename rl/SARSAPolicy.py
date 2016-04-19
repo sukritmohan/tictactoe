@@ -9,6 +9,13 @@ class SARSAPolicy(QLearningPolicy):
 
 
 	def updateQValues(self, state_history, reward = 0):
+		"""
+		We are given the sequence of states which the player has seen till it reached the terminal state and acquired
+		`reward`. Based on <s0,s1,s2,...,sn> and reward at sn, update the Q-Policy using SARSA method.
+		:param state_history: List of states visited by player
+		:param reward: Reward acquired at terminal state
+		"""
+
 		#from the state history create sliding window with 2 states
 		#reversed_history = list(reversed(self.__state_history))
 		state_transitions = [state_history[i:i+2] for i in xrange(len(state_history)-1)]

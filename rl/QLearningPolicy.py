@@ -21,7 +21,14 @@ class QLearningPolicy(QPolicy):
 		self.episode_rewards.append(reward)
 
 	def updateQValues(self, state_history, reward = 0):
-		#from the state history create sliding window with 2 states
+		"""
+		We are given the sequence of states which the player has seen till it reached the terminal state and acquired
+		`reward`. Based on <s0,s1,s2,...,sn> and reward at sn, update the Q-Policy using Q-Learning method.
+		:param state_history: List of states visited by player
+		:param reward: Reward acquired at terminal state
+		"""
+
+		#from the state history create sliding window with 2 states to capture state transitions
 		state_transitions = [state_history[i:i+2] for i in xrange(len(state_history)-1)]
 
 		while state_transitions:
@@ -50,7 +57,7 @@ class QLearningPolicy(QPolicy):
 			else:
 				qval_s2 = 0
 			#For SARSA, this will the  Q(s2, a2)
-
+			#	--implemented in SARSAPolicy
 
 			qvals_state = self.q.get(s1, {})
 			q_sa = qvals_state.get(a1, 0)

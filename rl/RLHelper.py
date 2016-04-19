@@ -14,7 +14,7 @@ class RLHelper():
 		return map(lambda sl: sum(sl) / float(len(sl)), [list[i:i+window_length] for i in xrange(len(list)-window_length-1)])
 
 	@classmethod
-	def loadModel(cls, statefile):
+	def loadModel(cls, statefile, policytype = "qlearning"):
 		"""
 		Load the model from the statefile given. If statefile doesn't exist, or is empty, start creating a new model
 		:param statefile: Filepath of Reinforcement Learning Policy Model
@@ -30,7 +30,9 @@ class RLHelper():
 			print "\nERROR: Couldn't open model file for RLBotPlayer : %s\n\n" % statefile
 			state = {}
 
-		if state.get('policy', "") == 'sarsa':
+		type = state.get('policy', "") or policytype
+
+		if type == 'sarsa':
 			policy = SARSAPolicy(state, statefile)
 		else:
 			policy =QLearningPolicy(state, statefile)

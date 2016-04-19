@@ -56,7 +56,7 @@ class RLBotPlayer(Player):
 
 		return rotation, this_board
 
-	def __getRotatedBoard(self, board):
+	def __getNormalizedAndRotatedBoard(self, board):
 		"""
 		Normalize this board for this particular player (This player denoted as 'A', other player denoted as 'B', EMPTY as EMPTY).
 		This normalized notation helps maintain consistency in denoting states for the RL model.
@@ -76,7 +76,7 @@ class RLBotPlayer(Player):
 		:return: None
 		"""
 		#get the rotated and normalized board for this player
-		rotation, this_board = self.__getRotatedBoard(board)
+		rotation, this_board = self.__getNormalizedAndRotatedBoard(board)
 
 		self.__state_history.append((TicTacToeHelper.serializeBoard(this_board), -1))
 
@@ -86,7 +86,7 @@ class RLBotPlayer(Player):
 	def requestMove(self, board):
 
 		#get the rotated and normalized board for this player
-		rotation, this_board = self.__getRotatedBoard(board)
+		rotation, this_board = self.__getNormalizedAndRotatedBoard(board)
 
 		# pass the rotated and normalized board to the policy to get back the optimal move.
 		this_state = TicTacToeHelper.serializeBoard(this_board)

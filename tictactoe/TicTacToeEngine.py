@@ -54,7 +54,7 @@ class TicTacToeEngine:
 		:return: boolean denoting whether or not move was successful
 		"""
 
-		#the player who is making the move, must be the next player according to TicTacToeEngine
+		#the player who is making the move, must be the next player according to TicTacToeEngine. Otherwise something weird is up..
 		if(player != self.getNextPlayer()):
 			return False
 
@@ -114,6 +114,18 @@ class TicTacToeEngine:
 			if all(x != TicTacToeHelper.EMPTY for x in flattened_board):
 				state = 0
 
+		return state
+
+
+	def gameEnd(self, state):
+		"""
+		Called when the current game has ended. Depending on state, update the states for the players with the
+		appropriate rewards
+		:param state: Final game state
+		:return:
+		"""
+		model = self.getBoard()
+
 		if (state == 1):
 			self.player1_score += 1
 			self.player1.updateState(model, TicTacToeHelper.REWARD_WIN)
@@ -125,8 +137,9 @@ class TicTacToeEngine:
 		elif (state == 0):
 			self.player1.updateState(model, TicTacToeHelper.REWARD_DRAW)
 			self.player2.updateState(model, TicTacToeHelper.REWARD_DRAW)
+		else:
+			print "Invalid gameEnd state. Not doing anything"
 
-		return state
 
 	def die(self):
 		self.player1.saveState()

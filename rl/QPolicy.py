@@ -1,11 +1,13 @@
 import copy
 import random
 import pickle
+import abc
+
 
 class QPolicy(object):
 
-	def __init__(self, policy, model, exploration=15, statefile = None):
-		self.__policytype = policy
+	def __init__(self, policytype, model, exploration=15, statefile = None):
+		self.__policytype = policytype
 		self.setStatefile(statefile)
 		self.q = model.get('model', {})
 		self.episode_rewards = model.get('rewards', [])
@@ -29,6 +31,14 @@ class QPolicy(object):
 
 
 	def getAction(self, state, valid_actions):
+		"""
+		Use the epsilon greedy policy to select the next action from a list of valid actions, given the state.
+		Epsilon is stored as self.exploration - this is the probability by which function returns random action.
+		Function returns optimal action with probability (1-epsilon).
+		:param state: State of the game
+		:param valid_actions: List of valid actions which can be taken
+		:return:
+		"""
 
 		this_state_actions = self.q.get(state, {})
 
@@ -55,12 +65,13 @@ class QPolicy(object):
 
 		return ret_move
 
-
-	def updatePolicy(self):
-		pass
+	@abc.abstractmethod
+	def updatePolicy(*args):
+		"""Subclasses of QPolicy must implement function to updatePolicy on reaching terminal state"""
+		return
 
 	def persistPolicy(self, filepath = None):
-		if self.statefile:
+		if self.statefile or filepath:
 			qlmodel = {}
 			qlmodel['policy'] = self.__policytype
 			qlmodel['model'] = self.q
