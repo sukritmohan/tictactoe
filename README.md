@@ -32,6 +32,10 @@ On extended simulations, SARSA bot wins about 4 times as many games as a random 
 SARSA episode/reward : ./sarsa_training.png
 Q-Learning episode/reward : ./qlearning_training.png
 
+Haven't done too much tweaking of learning rate and discount rate to optimize model. Tuning these parameters
+will likely result in a better trained player. Learning rate would also benefit from some sort of simulated
+annealing treatment as the model starts to learn and get better.
+
 TODO:
 --------------------
 * [DONE] Unit tests for TicTacToe [tictactoe/TicTacToe_Tests.py]
