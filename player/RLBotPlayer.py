@@ -35,7 +35,7 @@ class RLBotPlayer(Player):
 		"""
 
 		#get all the possible board rotations
-		board_rotations = TicTacToeHelper.getSymmetricBoardStates(board)
+		board_rotations = TicTacToeHelper.getBoardRotatedStates(board)
 		#which board states have we seen so far?
 		policy_seen_states = self.policy.getSeenStates()
 		rotation = 0

@@ -47,6 +47,8 @@ class TicTacToeHelper():
 		From board position, return the board indexes
 		Eg getMoveIndexes(5) = (1,1)
 		"""
+		if move < 0 or move > TicTacToeHelper.SIZE*TicTacToeHelper.SIZE:
+			return -1, -1
 		i = (move-1)/TicTacToeHelper.SIZE
 		j = (move-1) % TicTacToeHelper.SIZE
 		return i,j
@@ -57,11 +59,13 @@ class TicTacToeHelper():
 		From board index i and j, return the board position
 		Eg: (1,2) = 6
 		"""
+		if i < 0 or i >= TicTacToeHelper.SIZE or j < 0 or j >= TicTacToeHelper.SIZE:
+			return -1
 		return TicTacToeHelper.SIZE*i + j + 1
 
 	#
 	@staticmethod
-	def getSymmetricBoardStates(board):
+	def getBoardRotatedStates(board):
 		"""
 		Returns all the symmetric positions of the board, from different starting points by rotating the board 4 times.
 		[
@@ -119,3 +123,5 @@ class TicTacToeHelper():
 			return TicTacToeHelper.getBoardPosition(j,max_index-i)
 		else:
 			return -1
+
+# UNIT TESTS FOR HELPER ARE
