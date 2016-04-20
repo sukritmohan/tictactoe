@@ -25,11 +25,13 @@ and lines 25,54,55 of SARSAPolicy.py and play game using command:
     python TicTacToeGame.py --sarsa --policy_file ./test_sarsa.dmp
 
 
-On extended simulations, SARSA bot wins about 4 times as many games as a random bot.
+On extended simulations, SARSA bot wins about 5 times as many games as a random bot.
+
     python TicTacToeGame.py --sarsa --training
 
 
 SARSA episode/reward : ./sarsa_training.png
+
 Q-Learning episode/reward : ./qlearning_training.png
 
 Haven't done too much tweaking of learning rate and discount rate to optimize model. Tuning these parameters
