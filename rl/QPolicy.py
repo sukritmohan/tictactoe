@@ -48,9 +48,7 @@ class QPolicy(object):
 		#use the epsilon greedy strategy to find the next move.
 		#create a list of tuples (action, q_value) from available actions (moves)
 		move_qval = map(lambda move: (move, this_state_actions[move]), valid_actions)
-		#print move_qval
 		max_qval = max(move_qval, key = lambda x: x[1])
-		#print max_qval
 
 		exploration_choice = random.randint(1, 100)
 

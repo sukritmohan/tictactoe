@@ -16,8 +16,7 @@ class SARSAPolicy(QLearningPolicy):
 		:param reward: Reward acquired at terminal state
 		"""
 
-		#from the state history create sliding window with 2 states
-		#reversed_history = list(reversed(self.__state_history))
+		#from the state history create sliding window with 2 states to get all state transitions
 		state_transitions = [state_history[i:i+2] for i in xrange(len(state_history)-1)]
 
 		while state_transitions:
@@ -35,7 +34,7 @@ class SARSAPolicy(QLearningPolicy):
 			if a2 == -1:
 				this_reward = reward
 			else:
-				this_reward = 0
+				this_reward = 0 #a2 == -1 means terminal state (this hardcoded value needs some code refactoring)
 
 			#NEED TO FIND qval_s2.
 			#For Q-Learning, this will the max( Q(s2, ax) , ax)

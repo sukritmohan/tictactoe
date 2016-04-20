@@ -46,7 +46,7 @@ class QLearningPolicy(QPolicy):
 			if a2 == -1:
 				this_reward = reward
 			else:
-				this_reward = 0
+				this_reward = 0 #a2 == -1 means terminal state (this hardcoded value needs some code refactoring)
 
 			#NEED TO FIND qval_s2.
 			#For Q-Learning, this will be  max( Q(s2, ax) , ax)

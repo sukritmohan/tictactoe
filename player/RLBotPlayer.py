@@ -25,10 +25,12 @@ class RLBotPlayer(Player):
 
 	def __selectFromSymmetricStates(self, board):
 		"""
-		A tictactoe board is symmetrical on rotating. Find a symmetric rotation of this board which we may have seen earlier.
+		This is an optimization strategy. Instead of training the model on every possible variation of the board, train
+		it on every distinct variation of the board. For any tictactoe board state, the boards formed by rotating this
+		board 3 times are equivalent in structure to the original tictactoe board.
+
+		Find a symmetric rotation of this board which we may have seen earlier.
 		If we haven't seen any symmetric variation of this board before, default to the original board state.
-		Finding a symmetric variation of this board which we have seen before helps us use our previously gained knowledge
-		about the optimal policy to choose a better action
 
 		:param board: Status of current board
 		:return: <integer>: number of rotations, <2d list>: rotated board
@@ -60,7 +62,10 @@ class RLBotPlayer(Player):
 		"""
 		Normalize this board for this particular player (This player denoted as 'A', other player denoted as 'B', EMPTY as EMPTY).
 		This normalized notation helps maintain consistency in denoting states for the RL model.
-		Choose a symmetric variation of this normalized board which the RL model has seen before and return <rotation_count, rotated_board>
+		Finding a symmetric variation of this board which we have seen before helps us use our previously gained knowledge
+		about the optimal policy to choose a better action
+
+		Choose a symmetric variation of normalized board which the RL model has seen before and return <rotation_count, rotated_board>
 		"""
 		player_normalized_board = TicTacToeHelper.normalizeBoard(board, self.id)
 		rotation, this_board = self.__selectFromSymmetricStates(player_normalized_board)
