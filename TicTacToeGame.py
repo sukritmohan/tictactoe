@@ -69,13 +69,13 @@ if __name__ == "__main__":
 	(options, args) = parser.parse_args()
 
 	if not options.is2P:
-		if options.isQL: #Bot follows QLearning Policy
+		if options.isSARSA: #Bot follows SARSA Policy
+			filepath = options.policy_file or (this_dir + "/rl/sarsamodel_agent_v_agent.dmp")
+			policy = RLHelper.loadModel(filepath, "sarsa")
+		elif options.isQL: #Bot follows QLearning Policy
 			#if model_file is passed, use that, otherwise use the previously trained qlearning model.
 			filepath = options.policy_file or (this_dir + "/rl/qlmodel_agent_v_agent.dmp")
 			policy = RLHelper.loadModel(filepath, "qlearning")
-		elif options.isSARSA: #Bot follows SARSA Policy
-			filepath = options.policy_file or (this_dir + "/rl/sarsamodel_agent_v_agent.dmp")
-			policy = RLHelper.loadModel(filepath, "sarsa")
 
 
 

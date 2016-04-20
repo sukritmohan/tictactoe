@@ -73,7 +73,7 @@ class QPolicy(object):
 			qlmodel = {}
 			qlmodel['policy'] = self.__policytype
 			qlmodel['model'] = self.q
-			qlmodel['rewards'] = self.episode_rewards
+			qlmodel['rewards'] = []#self.episode_rewards
 
 			try:
 				file = filepath or self.statefile
