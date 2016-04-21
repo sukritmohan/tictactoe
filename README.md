@@ -25,14 +25,15 @@ and lines 25,54,55 of SARSAPolicy.py and play game using command:
     python TicTacToeGame.py --sarsa --policy_file ./test_sarsa.dmp
 
 
-On extended simulations, SARSA bot wins about 5 times as many games as a random bot.
+On extended simulations, SARSA bot wins about 5 times as many games as a random bot, whereas QLearningBot wins about 6-7 times as 
+many games as a random bot.
 
     python TicTacToeGame.py --sarsa --training
 
 
-SARSA episode/reward : ./sarsa_training.png
+SARSA episode/reward : ./models/sarsa_training.png
 
-Q-Learning episode/reward : ./qlearning_training.png
+Q-Learning episode/reward : ./models/qlearning_training.png
 
 Haven't done too much tweaking of learning rate and discount rate to optimize model. Tuning these parameters
 will likely result in a better trained player. Learning rate would also benefit from some sort of simulated
@@ -50,6 +51,3 @@ TODO:
   [sarsamodel_agent_v_agent.dmp was trained using the same sarsa model playing as both players]
 * Games can be run parallelly, but Q-value policy needs to be shared between the threads.
 
-
-Needs a little more refactoring for it to be adaptable to train different types of games (QPolicy needs to be able to
-take in rewards at different transition states, instead of training off of just the reward at the final state).
