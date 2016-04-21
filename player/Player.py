@@ -13,8 +13,16 @@ class Player(object):
 		"""Any preparatory work that a player needs to do at the start of a game"""
 		pass
 
+	def makeMove(*args):
+		"""Player makes move. Update internal state"""
+		pass
+
+	def receiveReward(*args):
+		"""Player receives reward for previous move. Update internal state"""
+		pass
+
 	def updateState(*args):
-		"""If the player needs to update its state during gameplay, call this function"""
+		"""Should be called on terminal state. Update the policy."""
 		pass
 
 	@abc.abstractmethod

@@ -16,17 +16,50 @@ class QLearningPolicy(QPolicy):
 	def setDiscountingFactor(self, gamma):
 		self.gamma = gamma
 
-	def updatePolicy(self, state_history, reward = 0):
-		self.updateQValues(state_history, reward)
-		self.episode_rewards.append(reward)
 
-	def updateQValues(self, state_history, reward = 0):
+	def updatePolicyWithStateHistory(self, state_history):
 		"""
-		We are given the sequence of states which the player has seen till it reached the terminal state and acquired
-		`reward`. Based on <s0,s1,s2,...,sn> and reward at sn, update the Q-Policy using Q-Learning method.
-		:param state_history: List of states visited by player
-		:param reward: Reward acquired at terminal state
+		state_history is a list of tuples (state, action, reward) describing the actions taken by the bot
+		update q-values using the state transitions, and store the reward for this episode
+		:param state_history: List of tuples (state, action, reward)
 		"""
+		self.__updateQValuesWithStateHistory(state_history)
+		rewards = map(lambda t: t[2], state_history)
+		self.episode_rewards.append(sum(rewards))
+
+
+	def updatePolicy(self, state1, action1, state2, action2 = None, reward = 0):
+		"""
+		Given s1,a1,r1,s2,a2, update the Q-values using Q-Learning
+		"""
+		
+		#NEED TO FIND qval_s2.
+		#For Q-Learning, this will be  max( Q(s2, ax) , ax)
+		s2_moves = self.q.get(state2, {})
+		
+		if len(s2_moves) > 0:
+		        qval_state2 = max(s2_moves.values())
+		else:
+		        qval_state2 = 0
+		#For SARSA, this will the  Q(s2, a2)
+		#       --implemented in SARSAPolicy
+		
+		s1_moves = self.q.get(state1, {})
+		q_sa = s1_moves.get(action1, 0)
+		
+		new_q_sa = q_sa + self.alpha * (reward + (self.gamma * qval_state2) - q_sa)
+		
+		s1_moves[action1] = new_q_sa
+		self.q[state1] = s1_moves
+
+
+	def __updateQValuesWithStateHistory(self, state_history):
+		"""
+		From the state_history supplied, update q-values for this policy
+		:param state_history: List of tuples (state, action, reward)
+		"""
+
+		state_history.append(("game", -1, 0))
 
 		#from the state history create sliding window with 2 states to capture state transitions
 		state_transitions = [state_history[i:i+2] for i in xrange(len(state_history)-1)]
@@ -39,33 +72,13 @@ class QLearningPolicy(QPolicy):
 			e1 = transition[0]
 			s1 = e1[0]
 			a1 = e1[1]
+			r1 = e1[2]
 			e2 = transition[1]
 			s2 = e2[0]
 			a2 = e2[1]
+			r2 = e2[2]
 
-			if a2 == -1:
-				this_reward = reward
-			else:
-				this_reward = 0 #a2 == -1 means terminal state (this hardcoded value needs some code refactoring)
-
-			#NEED TO FIND qval_s2.
-			#For Q-Learning, this will be  max( Q(s2, ax) , ax)
-			s2_moves = self.q.get(s2, {})
-
-			if len(s2_moves) > 0:
-				qval_s2 = max(s2_moves.values())
-			else:
-				qval_s2 = 0
-			#For SARSA, this will the  Q(s2, a2)
-			#	--implemented in SARSAPolicy
-
-			qvals_state = self.q.get(s1, {})
-			q_sa = qvals_state.get(a1, 0)
-
-			new_q_sa = q_sa + self.alpha * (this_reward + (self.gamma * qval_s2) - q_sa)
-
-			qvals_state[a1] = new_q_sa
-			self.q[s1] = qvals_state
+			self.updatePolicy(s1,a1,s2,a2,r1)
 
 		#print "Q VALUES AFTER EPISODE::"
 		#print self.q

@@ -40,7 +40,10 @@ class TicTacToeEngine:
 
 	def getNextPlayer(self):
 		"""Return the next player"""
-		if(not self.turn):
+		return self.__getPlayer(self.turn)
+
+	def __getPlayer(self, turn):
+		if(not turn):
 			player = self.player1
 		else:
 			player = self.player2
@@ -58,9 +61,12 @@ class TicTacToeEngine:
 		if(player != self.getNextPlayer()):
 			return False
 
+		this_board = self.getBoard()
+
 		#make the move on the board. If the move is successful, toggle turn
 		move_successful = self.__board.makeMove(player.id, move)
 		if move_successful:
+			player.makeMove(this_board, move)
 			self.turn = not self.turn
 
 		return move_successful
@@ -116,6 +122,29 @@ class TicTacToeEngine:
 
 		return state
 
+	def processState(self, state):
+		"""
+		Based on the state of the game, distribute rewards
+		:param state: Final game state
+		:return:
+		"""
+		if state >= 0:
+			#game is over. Both players get some reward
+			if state == 1:
+				self.player1_score += 1
+				self.player1.receiveReward(TicTacToeHelper.REWARD_WIN)
+				self.player2.receiveReward(TicTacToeHelper.REWARD_LOSE)
+			elif (state == 2):
+				self.player2_score += 1
+				self.player1.receiveReward(TicTacToeHelper.REWARD_LOSE)
+				self.player2.receiveReward(TicTacToeHelper.REWARD_WIN)
+			elif (state == 0):
+				self.player1.receiveReward(TicTacToeHelper.REWARD_DRAW)
+				self.player2.receiveReward(TicTacToeHelper.REWARD_DRAW)
+		else:
+			player = self.__getPlayer(self.turn)
+			player.receiveReward(TicTacToeHelper.ONGOING)
+
 
 	def gameEnd(self, state):
 		"""
@@ -124,21 +153,8 @@ class TicTacToeEngine:
 		:param state: Final game state
 		:return:
 		"""
-		model = self.getBoard()
-
-		if (state == 1):
-			self.player1_score += 1
-			self.player1.updateState(model, TicTacToeHelper.REWARD_WIN)
-			self.player2.updateState(model, TicTacToeHelper.REWARD_LOSE)
-		elif (state == 2):
-			self.player2_score += 1
-			self.player1.updateState(model, TicTacToeHelper.REWARD_LOSE)
-			self.player2.updateState(model, TicTacToeHelper.REWARD_WIN)
-		elif (state == 0):
-			self.player1.updateState(model, TicTacToeHelper.REWARD_DRAW)
-			self.player2.updateState(model, TicTacToeHelper.REWARD_DRAW)
-		else:
-			print "Invalid gameEnd state. Not doing anything"
+		self.player1.updateState()
+		self.player2.updateState()
 
 
 	def die(self):

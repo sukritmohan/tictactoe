@@ -21,7 +21,7 @@ class RLBotPlayer(Player):
 
 	def newGame(self):
 		self.__state_history = []
-
+		self.__reward = []
 
 	def __selectFromSymmetricStates(self, board):
 		"""
@@ -72,24 +72,18 @@ class RLBotPlayer(Player):
 
 		return rotation, this_board
 
+	def updateState(self):
+		"""Should be called on terminal state. Update the policy."""
+		if len(self.__state_history) != len(self.__reward):
+			raise Exception("State|Action tuples must be of the same length as Reward list")
 
-	def updateState(self, board, reward):
-		"""
-		Should be called on terminal state. Update the policy.
-		:param board: final board
-		:param reward: reward at end of game
-		:return: None
-		"""
-		#get the rotated and normalized board for this player
-		rotation, this_board = self.__getNormalizedAndRotatedBoard(board)
+		sar = [(sa[0], sa[1], r) for (sa, r) in zip(self.__state_history, self.__reward)]
 
-		self.__state_history.append((TicTacToeHelper.serializeBoard(this_board), -1))
-
-		self.policy.updatePolicy(self.__state_history, reward)
+		self.policy.updatePolicyWithStateHistory(sar)
 
 
 	def requestMove(self, board):
-
+		"""Request move from policy - this is called to get the move which the player wants to make"""
 		#get the rotated and normalized board for this player
 		rotation, this_board = self.__getNormalizedAndRotatedBoard(board)
 
@@ -99,13 +93,35 @@ class RLBotPlayer(Player):
 
 		move = self.policy.getAction(this_state, valid_moves)
 
-		#save this state and the move that this player made for this state
-		self.__state_history.append((this_state, move))
-
 		# rotate the optimal move back `rotation` times to match the original board index
 		ret_move = TicTacToeHelper.reverseRotateMove(move, rotation)
 		return ret_move
 
+	def makeMove(self, board, move):
+		"""
+		If the move selected by the player is valid, 
+		then Engine asks player to makeMove and update its internal state
+		"""
+		rotation, this_board = self.__getNormalizedAndRotatedBoard(board)
+		this_state = TicTacToeHelper.serializeBoard(this_board)
+
+		this_move = TicTacToeHelper.rotateMove(move, rotation)
+
+		self.__state_history.append((this_state, this_move))
+
+	def receiveReward(self, reward):
+		"""
+		Based on player's previous move and the state reached on taking action, 
+		Engine sends player a reward for the move
+		"""
+		if len(self.__state_history) > 0:
+			self.__reward.append(reward)
+		else:
+			#can't receive reward without making any move first. This else statement is encountered
+			#on new game situations. Do nothing here..
+			pass
 
 	def saveState(self):
 		self.policy.persistPolicy()
+
+

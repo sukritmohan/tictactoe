@@ -18,6 +18,9 @@ class TicTacToe:
 	def __init__(self, player1, player2, view):
 		self.player1 = player1
 		self.player2 = player2
+		self.player1.id = 1
+		self.player2.id = 2
+
 		self.view = view
 		self.game_engine = TicTacToeEngine(self.player1, self.player2)
 
@@ -31,18 +34,26 @@ class TicTacToe:
 			self.view.showGamePlayState(self.game_engine.getGameplayState())
 			state = -1
 
+			#Start new game
 			self.game_engine.newGame()
 
-			while(state == -1):
+			while(state == -1): #while the game is still being played (no win/lose/draw)
 
-				player, move = self.view.requestMove(self.game_engine.getNextPlayer(), self.game_engine.getBoard())
+				this_board = self.game_engine.getBoard()
+
+				#given this board and the next player who should make a move, request move from VIEW
+				player, move = self.view.requestMove(self.game_engine.getNextPlayer(), this_board)
 
 				move_successful = self.game_engine.makeMove(player, move)
 				if not move_successful:
 					self.view.moveUnsuccessful() #Invalid move. Try again - engine does not toggle player turn.
 					continue
 
+				#if move was successful, evaluate the board state to see if someone won
 				state = self.game_engine.evaluateBoard()
+				#process the board state - distribute rewards, etc.
+				self.game_engine.processState(state)
+
 				if(state != -1):
 					#game has ended. Print state.
 					self.view.gameEnd(state, self.game_engine.getBoard())
@@ -70,11 +81,11 @@ if __name__ == "__main__":
 
 	if not options.is2P:
 		if options.isSARSA: #Bot follows SARSA Policy
-			filepath = options.policy_file or (this_dir + "/rl/sarsamodel_agent_v_agent.dmp")
+			filepath = options.policy_file or (this_dir + "/models/sarsamodel_agent_v_agent.dmp")
 			policy = RLHelper.loadModel(filepath, "sarsa")
 		elif options.isQL: #Bot follows QLearning Policy
 			#if model_file is passed, use that, otherwise use the previously trained qlearning model.
-			filepath = options.policy_file or (this_dir + "/rl/qlmodel_agent_v_agent.dmp")
+			filepath = options.policy_file or (this_dir + "/models/qlmodel_agent_v_agent.dmp")
 			policy = RLHelper.loadModel(filepath, "qlearning")
 
 
@@ -94,8 +105,8 @@ if __name__ == "__main__":
 
 	## Training Agent-vs-Agent game using the same policy object ##
 	# The way the code is designed, the rewards list will be meaningless here, since at each game we append a WIN and a LOSS to the list.
-	# policy1 = RLHelper.loadModel((this_dir + "/rl/sarsamodel_agent_v_agent.dmp"), "sarsa")
-	# policy2 = RLHelper.loadModel((this_dir + "/rl/qlmodel_agent_v_agent.dmp"), "qlearning")
+	# policy1 = RLHelper.loadModel((this_dir + "/models/sarsa_new.dmp"), "sarsa")
+	# policy2 = RLHelper.loadModel((this_dir + "/models/qlmodel_new.dmp"), "qlearning")
 	# player1 = RLBotPlayer(1, policy1)
 	# player2 = RLBotPlayer(2, policy2)
 	# view = TrainingView(player1, player2)

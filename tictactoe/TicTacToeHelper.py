@@ -8,6 +8,7 @@ class TicTacToeHelper():
 	REWARD_WIN = 100
 	REWARD_DRAW = -5
 	REWARD_LOSE = -100
+	ONGOING = 0
 
 	@staticmethod
 	def getValidMoves(board):
@@ -124,4 +125,37 @@ class TicTacToeHelper():
 		else:
 			return -1
 
-# UNIT TESTS FOR HELPER ARE
+	@staticmethod
+	def rotateMove(move, rotation):
+		"""
+		Returns the rotated index position of tile on the board rotated `rotation` times.
+		
+		1 | 2 | 3                                  7 | 4 | 1
+		---------                                                                  ---------
+		4 | 5 | 6          --- 1 rotation --->>    8 | 5 | 2
+		---------                                                                  _________
+		7 | 8 | 9                                                                  9 | 6 | 3
+		
+		Eg: rotateMove(7, 1) = 1   (since 7 on the original board is index 1 on the rotated board)
+		
+		:param move: Move index on rotated board
+		:param rotation: Number of rotations on new board
+		:return: Index of number on original board (before rotations)
+		"""
+		i,j = TicTacToeHelper.getMoveIndexes(move)
+		
+		if i<0 or j<0:
+			return -1
+		
+		max_index = TicTacToeHelper.SIZE - 1
+		
+		if rotation == 0:
+			return TicTacToeHelper.getBoardPosition(i,j)
+		elif rotation == 1:
+			return TicTacToeHelper.getBoardPosition(j,max_index-i)
+		elif rotation == 2:
+			return TicTacToeHelper.getBoardPosition(max_index-i,max_index-j)
+		elif rotation == 3:
+			return TicTacToeHelper.getBoardPosition(max_index-j,i)
+		else:
+			return -1

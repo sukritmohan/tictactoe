@@ -8,48 +8,21 @@ class SARSAPolicy(QLearningPolicy):
 		QLearningPolicy.__init__(self, model=model, statefile = statefile, alpha = alpha, gamma = gamma, exploration = exploration, policytype = policytype)
 
 
-	def updateQValues(self, state_history, reward = 0):
+	def updatePolicy(self, state1, action1, state2, action2 = None, reward = 0):
 		"""
-		We are given the sequence of states which the player has seen till it reached the terminal state and acquired
-		`reward`. Based on <s0,s1,s2,...,sn> and reward at sn, update the Q-Policy using SARSA method.
-		:param state_history: List of states visited by player
-		:param reward: Reward acquired at terminal state
+		Given s1,a1,r1,s2,a2, update the Q-values using Q-Learning
 		"""
-
-		#from the state history create sliding window with 2 states to get all state transitions
-		state_transitions = [state_history[i:i+2] for i in xrange(len(state_history)-1)]
-
-		while state_transitions:
-			transition = state_transitions.pop()
-
-			#print transition
-
-			e1 = transition[0]
-			s1 = e1[0]
-			a1 = e1[1]
-			e2 = transition[1]
-			s2 = e2[0]
-			a2 = e2[1]
-
-			if a2 == -1:
-				this_reward = reward
-			else:
-				this_reward = 0 #a2 == -1 means terminal state (this hardcoded value needs some code refactoring)
-
-			#NEED TO FIND qval_s2.
-			#For Q-Learning, this will the max( Q(s2, ax) , ax)
-			#For SARSA, this will the  Q(s2, a2)
-			s2_moves = self.q.get(s2, {})
-			qval_s2 = s2_moves.get(a2, 0)
-
-
-			qvals_state = self.q.get(s1, {})
-			q_sa = qvals_state.get(a1, 0)
-
-			new_q_sa = q_sa + self.alpha * (this_reward + (self.gamma * qval_s2) - q_sa)
-
-			qvals_state[a1] = new_q_sa
-			self.q[s1] = qvals_state
-
-		#print "Q VALUES AFTER EPISODE::"
-		#print self.q
+		
+		#NEED TO FIND qval_s2.
+		#For Q-Learning, this will the max( Q(s2, ax) , ax)
+		#For SARSA, this will the  Q(s2, a2)
+		s2_moves = self.q.get(state2, {})
+		qval_state2 = s2_moves.get(action2, 0)
+		
+		s1_moves = self.q.get(state1, {})
+		q_sa = s1_moves.get(action1, 0)
+		
+		new_q_sa = q_sa + self.alpha * (reward + (self.gamma * qval_state2) - q_sa)
+		
+		s1_moves[action1] = new_q_sa
+		self.q[state1] = s1_moves
