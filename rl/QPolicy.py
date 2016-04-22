@@ -78,6 +78,7 @@ class QPolicy(object):
 			try:
 				file = filepath or self.statefile
 				with open(file, 'wb') as outfile:
+					print "Persisting policy to : %s" % file
 					pickle.dump(qlmodel, outfile)
 			except Exception, e:
 				print "ERROR: Could not persist policy to file"

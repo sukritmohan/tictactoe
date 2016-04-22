@@ -81,11 +81,11 @@ if __name__ == "__main__":
 
 	if not options.is2P:
 		if options.isSARSA: #Bot follows SARSA Policy
-			filepath = options.policy_file or (this_dir + "/models/sarsamodel_agent_v_agent.dmp")
+			filepath = options.policy_file or (this_dir + "/models/sarsamodel.dmp")
 			policy = RLHelper.loadModel(filepath, "sarsa")
 		elif options.isQL: #Bot follows QLearning Policy
 			#if model_file is passed, use that, otherwise use the previously trained qlearning model.
-			filepath = options.policy_file or (this_dir + "/models/qlmodel_agent_v_agent.dmp")
+			filepath = options.policy_file or (this_dir + "/models/qlmodel.dmp")
 			policy = RLHelper.loadModel(filepath, "qlearning")
 
 
@@ -105,8 +105,8 @@ if __name__ == "__main__":
 
 	## Training Agent-vs-Agent game using the same policy object ##
 	# The way the code is designed, the rewards list will be meaningless here, since at each game we append a WIN and a LOSS to the list.
-	# policy1 = RLHelper.loadModel((this_dir + "/models/sarsa_new.dmp"), "sarsa")
-	# policy2 = RLHelper.loadModel((this_dir + "/models/qlmodel_new.dmp"), "qlearning")
+	# policy1 = RLHelper.loadModel((this_dir + "/models/sarsamodel.dmp"), "sarsa")
+	# policy2 = RLHelper.loadModel((this_dir + "/models/qlmodel.dmp"), "qlearning")
 	# player1 = RLBotPlayer(1, policy1)
 	# player2 = RLBotPlayer(2, policy2)
 	# view = TrainingView(player1, player2)

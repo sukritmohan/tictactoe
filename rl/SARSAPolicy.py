@@ -3,7 +3,7 @@ from QLearningPolicy import QLearningPolicy
 
 class SARSAPolicy(QLearningPolicy):
 
-	def __init__(self, model={}, statefile = None, alpha = 0.7, gamma = 0.8, exploration = 15, policytype = "sarsa"):
+	def __init__(self, model={}, statefile = None, alpha = 0.2, gamma = 0.8, exploration = 15, policytype = "sarsa"):
 		print "BOT FOLLOWS SARSA POLICY"
 		QLearningPolicy.__init__(self, model=model, statefile = statefile, alpha = alpha, gamma = gamma, exploration = exploration, policytype = policytype)
 
@@ -22,7 +22,7 @@ class SARSAPolicy(QLearningPolicy):
 		s1_moves = self.q.get(state1, {})
 		q_sa = s1_moves.get(action1, 0)
 		
-		new_q_sa = q_sa + self.alpha * (reward + (self.gamma * qval_state2) - q_sa)
+		new_q_sa = (1 - self.alpha) * q_sa + self.alpha * (reward + (self.gamma * qval_state2) - q_sa)
 		
 		s1_moves[action1] = new_q_sa
 		self.q[state1] = s1_moves

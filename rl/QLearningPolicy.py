@@ -3,11 +3,11 @@ from QPolicy import QPolicy
 
 class QLearningPolicy(QPolicy):
 
-	def __init__(self, model={}, statefile = None, alpha = 0.7, gamma = 0.8, exploration = 15, policytype = "qlearning"):
+	def __init__(self, model={}, statefile = None, alpha = 0.2, gamma = 0.8, exploration = 15, policytype = "qlearning"):
 		print "BOT FOLLOWS QLEARNING POLICY"
 		QPolicy.__init__(self, policytype, model, exploration, statefile)
 
-		self.setLearningRate(alpha) #set alpha to 0.7 by default
+		self.setLearningRate(alpha) #set alpha to 0.2 by default
 		self.setDiscountingFactor(gamma) #set gamma to 0.8 by default
 
 	def setLearningRate(self, alpha):
@@ -47,7 +47,7 @@ class QLearningPolicy(QPolicy):
 		s1_moves = self.q.get(state1, {})
 		q_sa = s1_moves.get(action1, 0)
 		
-		new_q_sa = q_sa + self.alpha * (reward + (self.gamma * qval_state2) - q_sa)
+		new_q_sa = (1 - self.alpha) * q_sa + self.alpha * (reward + (self.gamma * qval_state2) - q_sa)
 		
 		s1_moves[action1] = new_q_sa
 		self.q[state1] = s1_moves
